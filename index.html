@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta de Técnico</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:40px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h1{
+    text-align:center;
+    color:#1f2937;
+    margin-bottom:25px;
+}
+
+h3{
+    color:#374151;
+    margin-bottom:10px;
+}
+
+.tecnicos{
+    background:#f9fafb;
+    padding:15px;
+    border-radius:10px;
+    border:1px solid #e5e7eb;
+    margin-bottom:20px;
+}
+
+.tecnicos label{
+    display:block;
+    margin:10px 0;
+    cursor:pointer;
+}
+
+input[type="checkbox"]{
+    margin-right:8px;
+}
+
+#bairro{
+    width:100%;
+    padding:14px;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+    font-size:16px;
+    outline:none;
+}
+
+#bairro:focus{
+    border-color:#2563eb;
+}
+
+button{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+#resultado{
+    margin-top:25px;
+    text-align:center;
+}
+
+.card{
+    background:#ecfeff;
+    border:1px solid #67e8f9;
+    border-radius:12px;
+    padding:20px;
+}
+
+.card h2{
+    font-size:14px;
+    color:#0f766e;
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:24px;
+    font-weight:bold;
+    color:#134e4a;
+}
+
+.erro{
+    background:#fef2f2;
+    border:1px solid #fca5a5;
+    color:#b91c1c;
+    border-radius:10px;
+    padding:15px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Consulta de Técnico</h1>
+
+    <h3>Técnicos indisponíveis</h3>
+
+    <div class="tecnicos">
+
+        <label>
+            <input type="checkbox" id="joao">
+            João Carlos Rocha Araújo
+        </label>
+
+        <label>
+            <input type="checkbox" id="lucas">
+            Lucas Hernan Barbosa Fontes Mendes
+        </label>
+
+        <label>
+            <input type="checkbox" id="marcus">
+            Marcus Vinicius Leite e Silva
+        </label>
+
+    </div>
+
+    <input
+        type="text"
+        id="bairro"
+        placeholder="Digite o nome do bairro"
+        onkeypress="if(event.key==='Enter') pesquisar()"
+    >
+
+    <button onclick="pesquisar()">
+        Pesquisar
+    </button>
+
+    <div id="resultado"></div>
+
+</div>
+
+<script>
+
+const bairros = {
+
+"AEROLANDIA":"João Carlos Rocha Araújo",
+"ALTO DA BOA VISTA":"João Carlos Rocha Araújo",
+"ALTO DO UMARI":"Marcus Vinicius Leite e Silva",
+"ALTO DO CONDURU":"Marcus Vinicius Leite e Silva",
+"AROEIRAS":"João Carlos Rocha Araújo",
+"AROEIRAS DO MATADOURO":"João Carlos Rocha Araújo",
+"AROEIRAS DO ITAIM":"João Carlos Rocha Araújo",
+"BAIXIO DA IPUEIRA":"Marcus Vinicius Leite e Silva",
+"BELA VISTA":"João Carlos Rocha Araújo",
+"BELO NORTE":"João Carlos Rocha Araújo",
+"BELO SUL":"João Carlos Rocha Araújo",
+"BOA SORTE":"João Carlos Rocha Araújo",
+"BOA VISTA":"João Carlos Rocha Araújo",
+"BOMBA":"João Carlos Rocha Araújo",
+"BR-316":"João Carlos Rocha Araújo",
+"CANTO DA VARZEA":"João Carlos Rocha Araújo",
+"CATAVENTO":"Marcus Vinicius Leite e Silva",
+"CENTRO":"João Carlos Rocha Araújo",
+"CIDADE DE DEUS":"João Carlos Rocha Araújo",
+"CIPAUBA":"Marcus Vinicius Leite e Silva",
+"COHAB":"Lucas Hernan Barbosa Fontes Mendes",
+"CONDURU":"Marcus Vinicius Leite e Silva",
+"CONJUNTO DA PASSAGEM DAS PEDRAS":"João Carlos Rocha Araújo",
+"CONJUNTO DUAS BARRAS":"Marcus Vinicius Leite e Silva",
+"CONJUNTO PETRONIO PORTELA":"Lucas Hernan Barbosa Fontes Mendes",
+"DNER":"Marcus Vinicius Leite e Silva",
+"EMAUS":"João Carlos Rocha Araújo",
+"ENTRADA DE PICOS":"João Carlos Rocha Araújo",
+"EXPOSICAO":"Marcus Vinicius Leite e Silva",
+"FATIMA":"João Carlos Rocha Araújo",
+"IPUEIRAS":"João Carlos Rocha Araújo",
+"JARDIM DAS OLIVEIRAS":"Marcus Vinicius Leite e Silva",
+"JARDIM NATAL":"Marcus Vinicius Leite e Silva",
+"JUNCO":"Marcus Vinicius Leite e Silva",
+"LAGOA COMPRIDA":"Marcus Vinicius Leite e Silva",
+"LAGOA GRANDE":"Marcus Vinicius Leite e Silva",
+"LOTEAMENTO JARDIM DUAS BARRAS":"Lucas Hernan Barbosa Fontes Mendes",
+"LOTEAMENTO LOUZINHO MONTEIRO":"João Carlos Rocha Araújo",
+"LOTEAMENTO UMBUZAL":"João Carlos Rocha Araújo",
+"LOUZINHO MONTEIRO":"João Carlos Rocha Araújo",
+"MALHADA GRANDE DOS TEIXEIRAS":"Lucas Hernan Barbosa Fontes Mendes",
+"MALVA":"João Carlos Rocha Araújo",
+"MIROLANDIA":"João Carlos Rocha Araújo",
+"MORADA DO SOL":"João Carlos Rocha Araújo",
+"MORADA NOVA":"João Carlos Rocha Araújo",
+"MORRO DA AABB":"Marcus Vinicius Leite e Silva",
+"MALHADA GRANDE":"Lucas Hernan Barbosa Fontes Mendes",
+"MORRO DA AREIA":"João Carlos Rocha Araújo",
+"MORRO DA MACAMBIRA":"João Carlos Rocha Araújo",
+"MORRINHOS":"Lucas Hernan Barbosa Fontes Mendes",
+"NOVO PANTANAL":"Lucas Hernan Barbosa Fontes Mendes",
+"PANTANAL":"Lucas Hernan Barbosa Fontes Mendes",
+"PARAIBINHA":"Lucas Hernan Barbosa Fontes Mendes",
+"PARQUE DE EXPOSICAO":"Marcus Vinicius Leite e Silva",
+"PASSAGEM DAS PEDRAS":"João Carlos Rocha Araújo",
+"PARQUE INDUSTRIAL":"Lucas Hernan Barbosa Fontes Mendes",
+"PAROQUIAL":"João Carlos Rocha Araújo",
+"PASSAGEM DAS PEDRAS":"João Carlos Rocha Araújo",
+"PEDRINHAS":"Marcus Vinicius Leite e Silva",
+"POVOADO RIACHO VERMELHO":"Lucas Hernan Barbosa Fontes Mendes",
+"POVOADO TORROES":"João Carlos Rocha Araújo",
+"SAMAMBAIA DOS MARQUES":"Lucas Hernan Barbosa Fontes Mendes",
+"SAO JOSE":"João Carlos Rocha Araújo",
+"SAO PEDRO":"João Carlos Rocha Araújo",
+"SAO SEBASTIAO":"João Carlos Rocha Araújo",
+"SAO VICENTE":"João Carlos Rocha Araújo",
+"SAURTIGA":"João Carlos Rocha Araújo",
+"UMARI":"Marcus Vinicius Leite e Silva",
+"URBANO":"João Carlos Rocha Araújo",
+"VILA SERRANA":"Lucas Hernan Barbosa Fontes Mendes",
+"ZONA RURAL":"Marcus Vinicius Leite e Silva",
+"SAMAMBAIA":"Lucas Hernan Barbosa Fontes Mendes",
+"SAMAMBAIA 2":"Lucas Hernan Barbosa Fontes Mendes",
+"SAMAMBAIA2":"Lucas Hernan Barbosa Fontes Mendes",
+"SAMAMBAIA II":"Lucas Hernan Barbosa Fontes Mendes"
+
+};
+
+let ultimoTecnico = 0;
+
+function normalizar(texto){
+    return texto
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .toUpperCase()
+        .trim();
+}
+
+function salvarConfiguracao(){
+    localStorage.setItem("joao", document.getElementById("joao").checked);
+    localStorage.setItem("lucas", document.getElementById("lucas").checked);
+    localStorage.setItem("marcus", document.getElementById("marcus").checked);
+}
+
+function carregarConfiguracao(){
+    document.getElementById("joao").checked =
+        localStorage.getItem("joao") === "true";
+
+    document.getElementById("lucas").checked =
+        localStorage.getItem("lucas") === "true";
+
+    document.getElementById("marcus").checked =
+        localStorage.getItem("marcus") === "true";
+}
+
+document.getElementById("joao").addEventListener("change", salvarConfiguracao);
+document.getElementById("lucas").addEventListener("change", salvarConfiguracao);
+document.getElementById("marcus").addEventListener("change", salvarConfiguracao);
+
+function pesquisar(){
+
+    const bairro = normalizar(
+        document.getElementById("bairro").value
+    );
+
+    const resultado = document.getElementById("resultado");
+
+    if(!bairro){
+        resultado.innerHTML = "";
+        return;
+    }
+
+    const tecnicoOriginal = bairros[bairro];
+
+    if(!tecnicoOriginal){
+        resultado.innerHTML =
+            '<div class="erro">Bairro não encontrado</div>';
+        return;
+    }
+
+    const indisponiveis = [];
+
+    if(document.getElementById("joao").checked)
+        indisponiveis.push("João Carlos Rocha Araújo");
+
+    if(document.getElementById("lucas").checked)
+        indisponiveis.push("Lucas Hernan Barbosa Fontes Mendes");
+
+    if(document.getElementById("marcus").checked)
+        indisponiveis.push("Marcus Vinicius Leite e Silva");
+
+    if(indisponiveis.length === 3){
+        resultado.innerHTML =
+            '<div class="erro">Nenhum técnico disponível</div>';
+        return;
+    }
+
+    let tecnicoFinal = tecnicoOriginal;
+
+    if(indisponiveis.includes(tecnicoOriginal)){
+
+        const disponiveis = [
+            "João Carlos Rocha Araújo",
+            "Lucas Hernan Barbosa Fontes Mendes",
+            "Marcus Vinicius Leite e Silva"
+        ].filter(t => !indisponiveis.includes(t));
+
+        tecnicoFinal =
+            disponiveis[ultimoTecnico % disponiveis.length];
+
+        ultimoTecnico++;
+    }
+
+    resultado.innerHTML = `
+        <div class="card">
+            <h2>TÉCNICO DESIGNADO</h2>
+            <p>${tecnicoFinal}</p>
+        </div>
+    `;
+}
+
+carregarConfiguracao();
+
+</script>
+
+</body>
+</html>
